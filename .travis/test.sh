@@ -81,9 +81,9 @@ elif [[ $TASK == "bdist" ]]; then
 fi
 
 if [[ $TASK == "gpu" ]]; then
-    pushd /System/Library/Frameworks/OpenCL.framework/Versions/A/Headers/ || exit -1
-    sudo wget -w 1 -np -nd -nv -A h,hpp https://www.khronos.org/registry/cl/api/2.1/cl.hpp
-    popd || exit -1
+    mkdir $TRAVIS_BUILD_DIR/opencl_include
+    sudo wget -np -nd -A h,hpp -O $TRAVIS_BUILD_DIR/opencl_include/ https://www.khronos.org/registry/cl/api/2.1/cl.hpp
+    ls $TRAVIS_BUILD_DIR/opencl_include
     sed -i'.bak' 's/std::string device_type = "cpu";/std::string device_type = "gpu";/' $TRAVIS_BUILD_DIR/include/LightGBM/config.h
     grep -q 'std::string device_type = "gpu"' $TRAVIS_BUILD_DIR/include/LightGBM/config.h || exit -1  # make sure that changes were really done
     if [[ $METHOD == "pip" ]]; then
@@ -102,7 +102,7 @@ if [[ $TASK == "mpi" ]]; then
     cd $TRAVIS_BUILD_DIR/build
     cmake -DUSE_MPI=ON ..
 elif [[ $TASK == "gpu" ]]; then
-    cmake -DUSE_GPU=ON ..
+    cmake -DUSE_GPU=ON -DOpenCL_INCLUDE_DIR=$TRAVIS_BUILD_DIR/opencl_include/ ..
 else
     cmake ..
 fi
