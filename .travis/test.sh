@@ -82,7 +82,7 @@ fi
 
 if [[ $TASK == "gpu" ]]; then
     pushd /System/Library/Frameworks/OpenCL.framework/Versions/A/Headers/ || exit -1
-    sudo wget -w 1 -np -nd -nv -A h,hpp https://www.khronos.org/registry/cl/api/2.1/cl.hpp || exit -1
+    sudo wget -w 1 -np -nd -nv -A h,hpp https://www.khronos.org/registry/cl/api/2.1/cl.hpp
     popd || exit -1
     sed -i'.bak' 's/std::string device_type = "cpu";/std::string device_type = "gpu";/' $TRAVIS_BUILD_DIR/include/LightGBM/config.h
     grep -q 'std::string device_type = "gpu"' $TRAVIS_BUILD_DIR/include/LightGBM/config.h || exit -1  # make sure that changes were really done
